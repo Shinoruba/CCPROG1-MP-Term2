@@ -1,4 +1,5 @@
 /***************************************************************************
+
 This is to certify that this project is my own work, based on my personal efforts
 in studying and applying the concepts learned. I have constructed the
 functions and their respective algorithms and corresponding code by myself.
@@ -6,7 +7,8 @@ The program was run, tested, and debugged by my own efforts. I further
 certify that I have not copied in part or whole or otherwise plagiarized the
 work of other students and/or persons.
 Yazan M. Homssi, 
-122-----
+12206824
+
 ***************************************************************************/
 
 
@@ -22,8 +24,8 @@ Yazan M. Homssi,
 		The user wins if they reach the exit. The user loses if they run out of lives. 
 		
 	Programmed by: Homssi, Yazan M. S12
-	Last modified: March 21, 2023
-	Version: 2.2
+	Last modified: April 8, 2023
+	Version: 3.2
 
 	Acknowledgements: 
 https://gcc.gnu.org/onlinedocs/gcc/
@@ -39,15 +41,17 @@ https://codeforwin.org/c-programming/conditional-operator-programming-exercise
 */
 
 
+// --------------------------------------------------------------
+
 // Preprocessor directives used for the program
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-// Function prototypes that are going to be used later for the implementation of game creation & game play logic
-void gameCreation(int *numRooms, int *correctDoors, int *deathDoors, int *chanceDoors);
-void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int chanceDoors);
 
+// Function prototypes that are going to be used later for the implementation of game creation & game play logic
+void gameCreation(int *numRooms, int *correctDoors, int *deathDoors, int *chanceDoors, char name);
+void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int chanceDoors);
 
 
 int main() 
@@ -59,10 +63,17 @@ int correctDoors = 32341;
 int deathDoors = 44123;
 int chanceDoors = 13412;
 int roomNumber = 1;
+
+	char name[100];
+    printf("Enter your name: ");
+    scanf("%s", name);	
     
     // Main menu
 int choice;
-	do {
+
+	do 
+	{
+	printf("WELCOME %s\n", name);
     printf("Main Menu\n");
     printf("1. Game Creation\n");
     printf("2. Game Play\n");
@@ -72,7 +83,7 @@ int choice;
     		switch(choice) 
 			{
             case 1:
-                gameCreation(&numRooms, &correctDoors, &deathDoors, &chanceDoors);
+                gameCreation(&numRooms, &correctDoors, &deathDoors, &chanceDoors, name);
                 break;
             case 2:
                 gamePlay(lives, numRooms, correctDoors, deathDoors, chanceDoors);
@@ -84,11 +95,12 @@ int choice;
                 printf("Invalid choice! Please try again.\n");
                 break;
         	}
-    	} while (choice != 3);
-    
+    	}while(choice != 3);
+    	
     return 0;
 }
 
+// --------------------------------------------------------
 
 /* 
 gameCreation function takes input from user to create game settings.
@@ -99,7 +111,7 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
 @param chanceDoors: pointer, stores the combination of doors that offers a chance entered by the user.
 @return none(?) <- coming from a void function, It returns multiple values with the use of pointers 
 */
-    void gameCreation(int *numRooms, int *correctDoors, int *deathDoors, int *chanceDoors) 
+    void gameCreation(int *numRooms, int *correctDoors, int *deathDoors, int *chanceDoors, char name) 
 {
 	// Variables declared to be used later on
 	int n, i, digit, isValid;
@@ -110,7 +122,7 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
 	{
         printf("Enter the number of rooms (3-8): ");
         scanf("%d", &n);
-        if (n >= 3 && n <= 8) 
+        if(n >= 3 && n <= 8) 
 		{
             *numRooms = n;
             isValid = 1;
@@ -120,7 +132,7 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
         	printf("Invalid input. Please enter a number between 3 and 8.\n");
         	isValid = 0;
         }
-    }while (!isValid);
+    }while(!isValid);
     
     
     // To get the correct doors
@@ -129,7 +141,7 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
         printf("Enter the correct doors (must be %d digits, with digits between 1 and 4): ", *numRooms);
         isValid = 1;
         *correctDoors = 0;
-        for (i = 0; i < *numRooms; i++) 
+        for(i = 0; i < *numRooms; i++) 
 		{
             scanf("%1d", &digit);
             if (digit < 1 || digit > 4) 
@@ -138,12 +150,12 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
             }
             *correctDoors = *correctDoors * 10 + digit;
         }
-        if (!isValid || *correctDoors < pow(10, *numRooms - 1)) 
+        if(!isValid || *correctDoors < pow(10, *numRooms - 1)) 
 		{
             printf("Invalid input. Please enter a %d-digit number with digits between 1 and 4.\n", *numRooms);
             isValid = 0;
         }
-    }while (!isValid);
+    }while(!isValid);
     
     // To get the death doors
     do 
@@ -151,64 +163,69 @@ Precondition: numRooms, correctDoors, deathDoors, and chanceDoors are pointers t
         printf("Enter the death doors (must be %d digits, with digits between 1 and 4.\n Must not overlap with the correct doors): ", *numRooms);
         isValid = 1;
         *deathDoors = 0;
-        for (i = 0; i < *numRooms; i++) 
+        for(i = 0; i < *numRooms; i++) 
 		{
             scanf("%1d", &digit);
-            if (digit < 1 || digit > 4 || digit == (*correctDoors / (int)pow(10, *numRooms - i - 1)) % 10) 
+            if(digit < 1 || digit > 4 || digit == (*correctDoors / (int)pow(10, *numRooms - i - 1)) % 10) 
 			{
                 isValid = 0;
             }
             *deathDoors = *deathDoors * 10 + digit;
         }
-        if (!isValid || *deathDoors < pow(10, *numRooms - 1)) {
+        if(!isValid || *deathDoors < pow(10, *numRooms - 1)) 
+		{
             printf("Invalid input. Please enter a %d-digit number with digits between 1 and 4. \n Must not overlap with the correct doors.\n", *numRooms);
             isValid = 0;
         }
-    }while (!isValid);
+    }while(!isValid);
     
     // To get the chance doors
-    do {
+    do 
+	{
         printf("Enter the chance doors (must be %d digits, with digits between 1 and 4. \n Must not overlap with the correct or death doors): ", *numRooms);
         isValid = 1;
-        for (i = 0; i < *numRooms; i++) 
+        for(i = 0; i < *numRooms; i++) 
 		{
             scanf("%1d", &digit);
-            if (digit < 1 || digit > 4 || digit == (*correctDoors / (int)pow(10, *numRooms - i - 1)) % 10 || digit == (*deathDoors / (int)pow(10, *numRooms - i - 1)) % 10) 
+            if(digit < 1 || digit > 4 || digit == (*correctDoors / (int)pow(10, *numRooms - i - 1)) % 10 || digit == (*deathDoors / (int)pow(10, *numRooms - i - 1)) % 10) 
 			{
                 isValid = 0;
             }
             *chanceDoors = *chanceDoors * 10 + digit;
         }
-        if (!isValid || *chanceDoors < pow(10, *numRooms - 1)) 
+        if(!isValid || *chanceDoors < pow(10, *numRooms - 1)) 
 		{
             printf("Invalid input. Please enter a %d-digit number with digits between 1 and 4. \n Must not overlap with the correct or death doors.\n", *numRooms);
             isValid = 0;
             *chanceDoors = 0;
         }
-    } while (!isValid);
+    } while(!isValid);
     
     printf("Game created successfully!\n");
 }
 
 
+// -----------------------------------------------------------
 
 
-
-/* gamePlay function simulates the game using the user-defined settings.
+/* 
+gamePlay function simulates the game using the user-defined settings.
 Precondition: lives, numRooms, correctDoors, deathDoors, and chanceDoors are integers
 @param lives: integer, number of lives the player has for the game.
 @param numRooms: integer, number of rooms chosen for the game.
 @param correctDoors: integer, correct combination of doors for the game.
 @param deathDoors: integer, combination of doors that leads to death in the game.
 @param chanceDoors: integer, combination of doors that offers a chance in the game.
-@return none(?) */
+@return outcome of choices 
+*/
 void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int chanceDoors) 
 {
     int roomNumber = 1;
     int chosenDoor, doorResult;
+    char name[100];
     srand(time(NULL)); // Seed the random number generator
     
-    while (roomNumber <= numRooms) 
+    while(roomNumber <= numRooms) 
 	{
         // Display current room number and lives
         printf("\nRoom %d\n", roomNumber);
@@ -238,8 +255,9 @@ void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int cha
         printf("Enter the door number you want to open: ");
         scanf("%d", &chosenDoor);
         
-        // Determine the result of the chosen door
-        switch (chosenDoor) 
+        
+        
+        switch(chosenDoor) // Determine the result of the chosen door
 		{
             case 1:
                 doorResult = (correct % 10 == 1) ? 1 : (death % 10 == 1) ? -1 : (chance % 10 == 1) ? 0 : 2;
@@ -257,8 +275,9 @@ void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int cha
                 printf("Invalid door number.\n");
                 continue;
         }
-        // Update lives and room number based on door result
-        switch (doorResult) 
+        
+        
+        switch(doorResult) // Update lives and room number based on door result
 		{
             case -1:
                 printf("Oh no! You opened a death door! You lost a life.\n");
@@ -280,7 +299,7 @@ void gamePlay(int lives, int numRooms, int correctDoors, int deathDoors, int cha
         }
         
         // Check if the player ran out of lives
-        if (lives <= 0) 
+        if(lives <= 0) 
 		{
             printf("Game over. You ran out of lives.\n");
             return;
