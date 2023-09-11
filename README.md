@@ -1,0 +1,3 @@
+# CCPROG1 - Introduction to Programming
+Machine Project Description:
+  Game of chance, basically...
